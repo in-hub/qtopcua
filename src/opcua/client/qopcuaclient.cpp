@@ -373,7 +373,7 @@ QOpcUaPkiConfiguration QOpcUaClient::pkiConfiguration() const
     client->setAuthenticationInformation(authInfo);
     \endcode
 
-    \sa setAuthenticationInformation(), QOpcUaEndpointDescription
+    \sa connected(), stateChanged(), setAuthenticationInformation(), QOpcUaEndpointDescription
 */
 void QOpcUaClient::connectToEndpoint(const QOpcUaEndpointDescription &endpoint)
 {
@@ -383,7 +383,7 @@ void QOpcUaClient::connectToEndpoint(const QOpcUaEndpointDescription &endpoint)
 
 /*!
     Disconnects from the server.
-    \sa connectToEndpoint()
+    \sa disconnected(), connectToEndpoint()
 */
 void QOpcUaClient::disconnectFromEndpoint()
 {
