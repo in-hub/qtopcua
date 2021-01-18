@@ -67,7 +67,12 @@
 #if defined(Q_OS_UNIX)
 #include <QtCore/qdir.h>
 #endif
-#include <QtCore/private/qmemory_p.h>
+template <typename T, typename... Args>
+typename std::enable_if<!std::is_array<T>::value, std::unique_ptr<T>>::type
+qt_make_unique(Args &&...args)
+{
+    return std::unique_ptr<T>{new T(std::forward<Args>(args)...)};
+}
 #if defined(Q_OS_LINUX) && !defined(Q_OS_ANDROID)
 #include <link.h>
 #endif
@@ -874,7 +879,7 @@ bool q_resolveOpenSslSymbols()
     if (symbolsResolved.loadAcquire())
         return true;
     QMutexLocker locker(&symbolResolveMutex);
-    if (symbolsResolved.loadRelaxed())
+    if (symbolsResolved.load())
         return true;
     if (triedToResolveSymbols)
         return false;
