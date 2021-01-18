@@ -104,6 +104,7 @@ namespace Constants {
     // types of the same meta object will be added automatically.
 }
 
+/*
 void OpcUaPlugin::registerTypes(const char *uri)
 {
     Q_ASSERT(uri == QStringLiteral("QtOpcUa"));
@@ -165,8 +166,6 @@ void OpcUaPlugin::registerTypes(const char *uri)
     // Register the latest Qt version as QML type version
     qmlRegisterModule(uri, QT_VERSION_MAJOR, QT_VERSION_MINOR);
 }
-
+*/
 QT_END_NAMESPACE
-
-#include "opcua_plugin.moc"
 

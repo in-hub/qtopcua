@@ -1,5 +1,8 @@
+TEMPLATE = lib
+TARGET = opcua-qml
 QT += qml opcua
 QT -= gui
+CONFIG -= create_prl
 
 SOURCES += \
     opcua_plugin.cpp \
@@ -33,7 +36,6 @@ SOURCES += \
     opcuaoperandbase.cpp \
 
 HEADERS += \
-    opcua_plugin.h \
     opcuaconnection.h \
     opcuaendpointdiscovery.h \
     opcuanode.h \
@@ -63,7 +65,12 @@ HEADERS += \
     opcuaeventfilter.h \
     opcuaoperandbase.h \
 
-load(qml_plugin)
+target.path = $$[QT_INSTALL_LIBS]
+INSTALLS += target
+
+header_files.files = $$HEADERS
+header_files.path = $$[QT_INSTALL_HEADERS]/opcua-qml/
+INSTALLS += header_files
 
 OTHER_FILES += \
     plugin.json \
