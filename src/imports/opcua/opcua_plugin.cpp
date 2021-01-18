@@ -93,7 +93,7 @@ Q_LOGGING_CATEGORY(QT_OPCUA_PLUGINS_QML, "qt.opcua.plugins.qml")
    \value Constants.NodeAttribute.Historizing
    \value Constants.NodeAttribute.Executable
    \value Constants.NodeAttribute.UserExecutable
-*/
+
 namespace Constants {
     Q_NAMESPACE
     Q_CLASSINFO("RegisterEnumClassesUnscoped", "false")
@@ -165,8 +165,6 @@ void OpcUaPlugin::registerTypes(const char *uri)
     // Register the latest Qt version as QML type version
     qmlRegisterModule(uri, QT_VERSION_MAJOR, QT_VERSION_MINOR);
 }
-
+*/
 QT_END_NAMESPACE
-
-#include "opcua_plugin.moc"
 
