@@ -1,4 +1,5 @@
-QT += quick opcua
+QT += qml opcua
+QT -= gui
 
 SOURCES += \
     opcua_plugin.cpp \

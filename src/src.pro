@@ -9,7 +9,7 @@ plugin.subdir = plugins
 plugin.target = sub-plugins
 plugins.depends = opcua
 
-qtHaveModule(quick) {
+qtHaveModule(qml) {
     SUBDIRS += imports
     imports.depends += opcua
 }

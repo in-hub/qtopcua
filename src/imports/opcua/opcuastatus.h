@@ -37,7 +37,6 @@
 #ifndef OPCUASTATUS_H
 #define OPCUASTATUS_H
 
-#include <QStandardItemModel>
 #include <QtOpcUa/qopcuatype.h>
 #include <QOpcUaApplicationDescription>
 
