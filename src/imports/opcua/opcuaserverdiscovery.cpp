@@ -136,7 +136,7 @@ QT_BEGIN_NAMESPACE
 */
 
 OpcUaServerDiscovery::OpcUaServerDiscovery(QObject *parent)
-    : QStandardItemModel(parent)
+    : QStringListModel(parent)
 {
     insertColumn(0);
 }
@@ -229,10 +229,10 @@ void OpcUaServerDiscovery::handleServers(const QVector<QOpcUaApplicationDescript
 
     clearData();
     for (const auto &i : qAsConst(servers)) {
-        const int newRow = QStandardItemModel::rowCount();
-        QStandardItemModel::insertRow(newRow);
-        QStandardItemModel::setData(index(newRow, 0), i.applicationUri() + QLatin1String("\n") + i.productUri(), Qt::DisplayRole);
-        QStandardItemModel::setData(index(newRow, 0), QVariant::fromValue(i), Qt::UserRole);
+        const int newRow = QStringListModel::rowCount();
+        QStringListModel::insertRow(newRow);
+        QStringListModel::setData(index(newRow, 0), i.applicationUri() + QLatin1String("\n") + i.productUri(), Qt::DisplayRole);
+        QStringListModel::setData(index(newRow, 0), QVariant::fromValue(i), Qt::UserRole);
     }
     emit countChanged();
     emit serversChanged();
@@ -269,7 +269,7 @@ void OpcUaServerDiscovery::startFindServers()
 
 void OpcUaServerDiscovery::clearData()
 {
-    QStandardItemModel::removeRows(0, QStandardItemModel::rowCount());
+    QStringListModel::removeRows(0, QStringListModel::rowCount());
 }
 
 void OpcUaServerDiscovery::setConnection(OpcUaConnection *connection)
