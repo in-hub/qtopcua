@@ -37,7 +37,7 @@
 #ifndef OPCUASERVERDISCOVERY_H
 #define OPCUASERVERDISCOVERY_H
 
-#include <QStandardItemModel>
+#include <QStringListModel>
 #include <QtOpcUa/qopcuatype.h>
 #include <QOpcUaApplicationDescription>
 #include "opcuastatus.h"
@@ -46,7 +46,7 @@ QT_BEGIN_NAMESPACE
 
 class OpcUaConnection;
 
-class OpcUaServerDiscovery : public QStandardItemModel
+class OpcUaServerDiscovery : public QStringListModel
 {
     Q_OBJECT
     Q_PROPERTY(QString discoveryUrl READ discoveryUrl WRITE setDiscoveryUrl NOTIFY discoveryUrlChanged)
