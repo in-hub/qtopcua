@@ -128,7 +128,7 @@ QString Open62541Utils::nodeIdToQString(UA_NodeId id)
     }
     case UA_NODEIDTYPE_BYTESTRING: {
         const QByteArray temp(reinterpret_cast<char *>(id.identifier.byteString.data), id.identifier.byteString.length);
-        result.append(QStringLiteral("b=")).append(temp.toBase64());
+        result.append(QStringLiteral("b=")).append(QString::fromLatin1(temp.toBase64()));
         break;
     }
     default:
