@@ -94,8 +94,8 @@ private:
 };
 
 namespace Open62541Utils {
-    UA_NodeId nodeIdFromQString(const QString &name);
-    QString nodeIdToQString(UA_NodeId id);
+    UA_NodeId QOPEN62541_EXPORT nodeIdFromQString(const QString &name);
+    QString QOPEN62541_EXPORT nodeIdToQString(UA_NodeId id);
 }
 
 QT_END_NAMESPACE

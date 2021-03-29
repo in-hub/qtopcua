@@ -59,4 +59,10 @@
 #pragma clang diagnostic pop
 #endif
 
+#ifdef BUILD_QOPEN62541_PLUGIN
+#define QOPEN62541_EXPORT Q_DECL_EXPORT
+#else
+#define QOPEN62541_EXPORT Q_DECL_IMPORT
+#endif
+
 #endif // QOPEN62541_H

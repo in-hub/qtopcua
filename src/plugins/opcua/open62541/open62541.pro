@@ -13,6 +13,8 @@ qtConfig(open62541):!qtConfig(system-open62541) {
     win32-msvc: LIBS += open62541.lib
 }
 
+DEFINES += BUILD_QOPEN62541_PLUGIN
+
 HEADERS += \
     qopen62541backend.h \
     qopen62541client.h \

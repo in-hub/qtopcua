@@ -58,9 +58,9 @@ namespace QOpen62541ValueConverter {
         return static_cast<UA_AttributeId>(0);
     }
 
-    UA_Variant toOpen62541Variant(const QVariant&, QOpcUa::Types);
-    QVariant toQVariant(const UA_Variant&);
-    const UA_DataType *toDataType(QOpcUa::Types valueType);
+    QOPEN62541_EXPORT UA_Variant toOpen62541Variant(const QVariant&, QOpcUa::Types);
+    QOPEN62541_EXPORT QVariant toQVariant(const UA_Variant&);
+    QOPEN62541_EXPORT const UA_DataType *toDataType(QOpcUa::Types valueType);
     QOpcUa::Types qvariantTypeToQOpcUaType(QMetaType::Type type);
 
     template<typename TARGETTYPE, typename UATYPE>
