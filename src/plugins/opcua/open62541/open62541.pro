@@ -36,6 +36,10 @@ SOURCES += \
 
 OTHER_FILES = open62541-metadata.json
 
+header_files.files = $$HEADERS
+header_files.path = $$[QT_INSTALL_HEADERS]/qopen62541/
+INSTALLS += header_files
+
 PLUGIN_TYPE = opcua
 PLUGIN_CLASS_NAME = QOpen62541Plugin
 load(qt_plugin)
