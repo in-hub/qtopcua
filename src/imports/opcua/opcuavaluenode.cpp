@@ -129,6 +129,7 @@ void OpcUaValueNode::setupNode(const QString &absolutePath)
 {
     // Additionally read the value attribute
     setAttributesToRead(attributesToRead()
+                        | QOpcUa::NodeAttribute::AccessLevel
                         | QOpcUa::NodeAttribute::Value
                         | QOpcUa::NodeAttribute::DataType);
 
@@ -152,6 +153,14 @@ void OpcUaValueNode::setupNode(const QString &absolutePath)
         if (attr == QOpcUa::NodeAttribute::DataType && m_valueType == QOpcUa::Types::Undefined) {
             const auto valueType = QOpcUa::opcUaDataTypeToQOpcUaType(value.toString());
             m_valueType = valueType;
+        }
+        else if (attr == QOpcUa::NodeAttribute::AccessLevel) {
+            const auto writable = QOpcUa::AccessLevel(value.toInt()).testFlag(QOpcUa::AccessLevelBit::CurrentWrite);
+            if (writable != m_writable)
+            {
+                m_writable = writable;
+                Q_EMIT writableChanged();
+            }
         }
     });
 
@@ -229,6 +238,13 @@ QVariant OpcUaValueNode::value() const
     if (!m_connection || !m_node)
         return QVariant();
     return m_node->attribute(QOpcUa::NodeAttribute::Value);
+}
+
+bool OpcUaValueNode::writable() const
+{
+    if (!m_connection || !m_node)
+        return false;
+    return m_writable;
 }
 
 QDateTime OpcUaValueNode::serverTimestamp() const

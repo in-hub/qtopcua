@@ -48,6 +48,7 @@ class OpcUaValueNode : public OpcUaNode
     Q_DISABLE_COPY(OpcUaValueNode)
     Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
     Q_PROPERTY(QOpcUa::Types valueType READ valueType WRITE setValueType)
+    Q_PROPERTY(bool writable READ writable NOTIFY writableChanged)
     Q_PROPERTY(QDateTime serverTimestamp READ serverTimestamp)
     Q_PROPERTY(QDateTime sourceTimestamp READ sourceTimestamp)
     Q_PROPERTY(bool monitored READ monitored WRITE setMonitored NOTIFY monitoredChanged)
@@ -59,6 +60,7 @@ public:
     ~OpcUaValueNode();
     QVariant value() const;
 
+    bool writable() const;
     QDateTime serverTimestamp() const;
     QDateTime sourceTimestamp() const;
     bool monitored() const;
@@ -76,6 +78,7 @@ public slots:
 
 signals:
     void valueChanged(const QVariant &value);
+    void writableChanged();
     void monitoredChanged(bool monitored);
     void publishingIntervalChanged(double publishingInterval);
     void dataChangeOccurred(const QVariant &value);
@@ -92,6 +95,7 @@ private:
     bool m_monitoredState = false;
     double m_publishingInterval = 100;
     QOpcUa::Types m_valueType = QOpcUa::Types::Undefined;
+    bool m_writable = false;
     OpcUaDataChangeFilter *m_filter = nullptr;
 };
 
