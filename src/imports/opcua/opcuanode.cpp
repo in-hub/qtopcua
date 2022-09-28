@@ -359,7 +359,7 @@ void OpcUaNode::setupNode(const QString &absoluteNodePath)
 
     m_node = conn->m_client->node(m_absoluteNodePath);
     if (!m_node) {
-        qCWarning(QT_OPCUA_PLUGINS_QML) << "Invalid node:" << m_absoluteNodePath;
+        qCDebug(QT_OPCUA_PLUGINS_QML) << "Invalid node:" << m_absoluteNodePath;
         return;
     }
 
@@ -553,7 +553,7 @@ void OpcUaNode::retrieveAbsoluteNodePath(OpcUaNodeIdType *node, std::function<vo
 {
     auto conn = connection();
     if (!conn) {
-        qCWarning(QT_OPCUA_PLUGINS_QML) << "No connection to server";
+        qCDebug(QT_OPCUA_PLUGINS_QML) << "No connection to server";
         setStatus(Status::NoConnection);
         return;
     }
@@ -569,7 +569,7 @@ void OpcUaNode::retrieveAbsoluteNodePath(OpcUaNodeIdType *node, std::function<vo
     }
 
     if (!conn->connected()) {
-        qCWarning(QT_OPCUA_PLUGINS_QML) << "not connected";
+        qCDebug(QT_OPCUA_PLUGINS_QML) << "not connected";
         return;
     }
 
