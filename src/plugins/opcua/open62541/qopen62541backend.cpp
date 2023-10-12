@@ -88,6 +88,9 @@ Open62541AsyncBackend::~Open62541AsyncBackend()
 
 void Open62541AsyncBackend::readAttributes(quint64 handle, UA_NodeId id, QOpcUa::NodeAttributes attr, QString indexRange)
 {
+    if (!m_uaclient)
+        return;
+
     UaDeleter<UA_NodeId> nodeIdDeleter(&id, UA_NodeId_clear);
 
     UA_ReadRequest req;
@@ -137,6 +140,9 @@ void Open62541AsyncBackend::readAttributes(quint64 handle, UA_NodeId id, QOpcUa:
 
 void Open62541AsyncBackend::writeAttribute(quint64 handle, UA_NodeId id, QOpcUa::NodeAttribute attrId, QVariant value, QOpcUa::Types type, QString indexRange)
 {
+    if (!m_uaclient)
+        return;
+
     if (type == QOpcUa::Types::Undefined && attrId != QOpcUa::NodeAttribute::Value)
         type = attributeIdToTypeId(attrId);
 
@@ -169,6 +175,9 @@ void Open62541AsyncBackend::writeAttribute(quint64 handle, UA_NodeId id, QOpcUa:
 
 void Open62541AsyncBackend::writeAttributes(quint64 handle, UA_NodeId id, QOpcUaNode::AttributeMap toWrite, QOpcUa::Types valueAttributeType)
 {
+    if (!m_uaclient)
+        return;
+
     UaDeleter<UA_NodeId> nodeIdDeleter(&id, UA_NodeId_clear);
 
     if (toWrite.size() == 0) {
@@ -324,6 +333,9 @@ bool Open62541AsyncBackend::removeSubscription(UA_UInt32 subscriptionId)
 
 void Open62541AsyncBackend::callMethod(quint64 handle, UA_NodeId objectId, UA_NodeId methodId, QVector<QOpcUa::TypedVariant> args)
 {
+    if (!m_uaclient)
+        return;
+
     UA_Variant *inputArgs = nullptr;
 
     if (args.size()) {
@@ -358,6 +370,9 @@ void Open62541AsyncBackend::callMethod(quint64 handle, UA_NodeId objectId, UA_No
 
 void Open62541AsyncBackend::resolveBrowsePath(quint64 handle, UA_NodeId startNode, const QVector<QOpcUaRelativePathElement> &path)
 {
+    if (!m_uaclient)
+        return;
+
     UA_TranslateBrowsePathsToNodeIdsRequest req;
     UA_TranslateBrowsePathsToNodeIdsRequest_init(&req);
     UaDeleter<UA_TranslateBrowsePathsToNodeIdsRequest> requestDeleter(
@@ -492,6 +507,9 @@ void Open62541AsyncBackend::findServers(const QUrl &url, const QStringList &loca
 
 void Open62541AsyncBackend::readNodeAttributes(const QVector<QOpcUaReadItem> &nodesToRead)
 {
+    if (!m_uaclient)
+        return;
+
     if (nodesToRead.size() == 0) {
         emit readNodeAttributesFinished(QVector<QOpcUaReadResult>(), QOpcUa::UaStatusCode::BadNothingToDo);
         return;
@@ -529,6 +547,9 @@ void Open62541AsyncBackend::readNodeAttributes(const QVector<QOpcUaReadItem> &no
 
 void Open62541AsyncBackend::writeNodeAttributes(const QVector<QOpcUaWriteItem> &nodesToWrite)
 {
+    if (!m_uaclient)
+        return;
+
     if (nodesToWrite.isEmpty()) {
         emit writeNodeAttributesFinished(QVector<QOpcUaWriteResult>(), QOpcUa::UaStatusCode::BadNothingToDo);
         return;
@@ -583,6 +604,9 @@ void Open62541AsyncBackend::writeNodeAttributes(const QVector<QOpcUaWriteItem> &
 
 void Open62541AsyncBackend::addNode(const QOpcUaAddNodeItem &nodeToAdd)
 {
+    if (!m_uaclient)
+        return;
+
     UA_AddNodesRequest req;
     UA_AddNodesRequest_init(&req);
     UaDeleter<UA_AddNodesRequest> requestDeleter(&req, UA_AddNodesRequest_clear);
@@ -627,6 +651,9 @@ void Open62541AsyncBackend::addNode(const QOpcUaAddNodeItem &nodeToAdd)
 
 void Open62541AsyncBackend::deleteNode(const QString &nodeId, bool deleteTargetReferences)
 {
+    if (!m_uaclient)
+        return;
+
     UA_DeleteNodesRequest request;
     UA_DeleteNodesRequest_init(&request);
     UaDeleter<UA_DeleteNodesRequest> requestDeleter(&request, UA_DeleteNodesRequest_clear);
@@ -656,6 +683,9 @@ void Open62541AsyncBackend::deleteNode(const QString &nodeId, bool deleteTargetR
 
 void Open62541AsyncBackend::addReference(const QOpcUaAddReferenceItem &referenceToAdd)
 {
+    if (!m_uaclient)
+        return;
+
     UA_AddReferencesRequest request;
     UA_AddReferencesRequest_init(&request);
     UaDeleter<UA_AddReferencesRequest> requestDeleter(&request, UA_AddReferencesRequest_clear);
@@ -695,6 +725,9 @@ void Open62541AsyncBackend::addReference(const QOpcUaAddReferenceItem &reference
 
 void Open62541AsyncBackend::deleteReference(const QOpcUaDeleteReferenceItem &referenceToDelete)
 {
+    if (!m_uaclient)
+        return;
+
     UA_DeleteReferencesRequest request;
     UA_DeleteReferencesRequest_init(&request);
     UaDeleter<UA_DeleteReferencesRequest> requestDeleter(&request, UA_DeleteReferencesRequest_clear);
@@ -751,6 +784,9 @@ static void convertBrowseResult(UA_BrowseResult *src, quint32 referencesSize, QV
 
 void Open62541AsyncBackend::browse(quint64 handle, UA_NodeId id, const QOpcUaBrowseRequest &request)
 {
+    if (!m_uaclient)
+        return;
+
     UA_BrowseRequest uaRequest;
     UA_BrowseRequest_init(&uaRequest);
     UaDeleter<UA_BrowseRequest> requestDeleter(&uaRequest, UA_BrowseRequest_clear);

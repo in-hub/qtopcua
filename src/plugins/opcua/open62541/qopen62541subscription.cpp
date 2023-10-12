@@ -111,6 +111,9 @@ QOpen62541Subscription::~QOpen62541Subscription()
 
 UA_UInt32 QOpen62541Subscription::createOnServer()
 {
+    if (!m_backend->m_uaclient)
+        return 0;
+
     UA_CreateSubscriptionRequest req = UA_CreateSubscriptionRequest_default();
     req.requestedPublishingInterval = m_interval;
     req.requestedLifetimeCount = m_lifetimeCount;
