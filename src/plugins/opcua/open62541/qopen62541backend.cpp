@@ -594,8 +594,8 @@ void Open62541AsyncBackend::writeNodeAttributes(const QVector<QOpcUaWriteItem> &
                                                       &UA_TYPES[UA_TYPES_WRITERESPONSE], this, &requestId, m_asyncRequestTimeout);
 
     if (result != UA_STATUSCODE_GOOD) {
-        qCWarning(QT_OPCUA_PLUGINS_OPEN62541) << "Batch read failed:" << result;
-        emit readNodeAttributesFinished(QVector<QOpcUaReadResult>(), static_cast<QOpcUa::UaStatusCode>(result));
+        qCWarning(QT_OPCUA_PLUGINS_OPEN62541) << "Batch write failed:" << result;
+        emit writeNodeAttributesFinished(QVector<QOpcUaWriteResult>(), static_cast<QOpcUa::UaStatusCode>(result));
         return;
     }
 
