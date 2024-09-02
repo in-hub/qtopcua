@@ -940,6 +940,10 @@ void Open62541AsyncBackend::connectToEndpoint(const QOpcUaEndpointDescription &e
             m_uaclient = nullptr;
             return;
         }
+        if (trustListSize == 0 && revocationListSize == 0)
+        {
+            UA_CertificateVerification_AcceptAll(&conf->certificateVerification);
+        }
     } else {
 #else
     {
