@@ -59,7 +59,7 @@ public:
 
     Q_INVOKABLE void setAnonymousAuthentication();
     Q_INVOKABLE void setUsernameAuthentication(const QString &username, const QString &password);
-    Q_INVOKABLE void setCertificateAuthentication();
+    Q_INVOKABLE void setCertificateAuthentication(const QByteArray &authCert = {}, const QByteArray &authPrivateKey = {});
 
     const QVariant &authenticationData() const;
     Q_INVOKABLE QOpcUaUserTokenPolicy::TokenType authenticationType() const;

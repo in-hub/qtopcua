@@ -56,6 +56,25 @@ QT_BEGIN_NAMESPACE
 
 Q_DECLARE_LOGGING_CATEGORY(QT_OPCUA_PLUGINS_OPEN62541)
 
+static bool certDataToByteString(QByteArray data, UA_ByteString* target)
+{
+    UA_ByteString temp;
+    temp.length = data.length();
+    if (data.isEmpty())
+        temp.data = nullptr;
+    else {
+        if (data.startsWith('-')) { // PEM file
+            // mbedTLS expects PEM encoded data to be null terminated
+            data = data.append('\0');
+            temp.length = data.length();
+        }
+        temp.data = reinterpret_cast<unsigned char *>(data.data());
+    }
+
+    return UA_ByteString_copy(&temp, target) == UA_STATUSCODE_GOOD;
+}
+
+
 Open62541AsyncBackend::Open62541AsyncBackend(QOpen62541Client *parent)
     : QOpcUaBackend()
     , m_uaclient(nullptr)
@@ -996,6 +1015,49 @@ void Open62541AsyncBackend::connectToEndpoint(const QOpcUaEndpointDescription &e
         const auto credentials = authInfo.authenticationData().value<QPair<QString, QString>>();
         ret = UA_Client_connectUsername(m_uaclient, endpoint.endpointUrl().toUtf8().constData(),
                                          credentials.first.toUtf8().constData(), credentials.second.toUtf8().constData());
+#ifdef UA_ENABLE_ENCRYPTION
+    } else if (authInfo.authenticationType() == QOpcUaUserTokenPolicy::TokenType::Certificate) {
+
+        bool suitableTokenFound = false;
+        for (const auto &token : endpoint.userIdentityTokens()) {
+            if (token.tokenType() == QOpcUaUserTokenPolicy::Certificate &&
+                    m_clientImpl->supportedSecurityPolicies().contains(token.securityPolicy())) {
+                suitableTokenFound = true;
+                break;
+            }
+        }
+
+        if (!suitableTokenFound) {
+            qCWarning(QT_OPCUA_PLUGINS_OPEN62541) << "No suitable user token policy found";
+            emit stateAndOrErrorChanged(QOpcUaClient::Disconnected, QOpcUaClient::ClientError::NoError);
+            UA_Client_delete(m_uaclient);
+            m_uaclient = nullptr;
+            return;
+        }
+
+        UA_ByteString authCert;
+        UA_ByteString authPrivateKey;
+
+        const auto credentials = authInfo.authenticationData().value<QPair<QByteArray, QByteArray>>();
+        if (credentials.first.isEmpty() || credentials.second.isEmpty()) {
+            loadFileToByteString(pkiConfig.clientCertificateFile(), &authCert);
+            loadFileToByteString(pkiConfig.privateKeyFile(), &authPrivateKey);
+        } else {
+            certDataToByteString(credentials.first, &authCert);
+            certDataToByteString(credentials.second, &authPrivateKey);
+        }
+
+        ret = UA_ClientConfig_setAuthenticationCert(UA_Client_getConfig(m_uaclient), authCert, authPrivateKey);
+        if (ret == UA_STATUSCODE_GOOD) {
+            ret = UA_Client_connect(m_uaclient, endpoint.endpointUrl().toUtf8().constData());
+        } else {
+            qCWarning(QT_OPCUA_PLUGINS_OPEN62541) << "Failed to configure cert authentication";
+            emit stateAndOrErrorChanged(QOpcUaClient::Disconnected, QOpcUaClient::ClientError::NoError);
+        }
+
+        UA_ByteString_clear(&authCert);
+        UA_ByteString_clear(&authPrivateKey);
+#endif
     } else {
         emit stateAndOrErrorChanged(QOpcUaClient::Disconnected, QOpcUaClient::UnsupportedAuthenticationInformation);
         qCWarning(QT_OPCUA_PLUGINS_OPEN62541) << "Failed to connect: Selected authentication type"
@@ -1488,22 +1550,7 @@ bool Open62541AsyncBackend::loadFileToByteString(const QString &location, UA_Byt
         return false;
     }
 
-    QByteArray data = file.readAll();
-
-    UA_ByteString temp;
-    temp.length = data.length();
-    if (data.isEmpty())
-        temp.data = nullptr;
-    else {
-        if (data.startsWith('-')) { // PEM file
-            // mbedTLS expects PEM encoded data to be null terminated
-            data = data.append('\0');
-            temp.length = data.length();
-        }
-        temp.data = reinterpret_cast<unsigned char *>(data.data());
-    }
-
-    return UA_ByteString_copy(&temp, target) == UA_STATUSCODE_GOOD;
+    return certDataToByteString(file.readAll(), target);
 }
 
 bool Open62541AsyncBackend::loadAllFilesInDirectory(const QString &location, UA_ByteString **target, int *size) const

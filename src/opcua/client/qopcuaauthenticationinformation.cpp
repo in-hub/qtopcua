@@ -171,14 +171,15 @@ void QOpcUaAuthenticationInformation::setUsernameAuthentication(const QString &u
     Sets the authentication method to use certificates.
 
     When using this authentication type a proper configured \l QOpcUaPkiConfiguration has to be set to
-    the \l QOpcUaClient.
+    the \l QOpcUaClient. Alternatively a separate authentication certificate and private key can be set
+    explicitly by supplying the optional parameters.
 
     \sa QOpcUaPkiConfiguration QOpcUaClient::setPkiConfiguration()
 */
-void QOpcUaAuthenticationInformation::setCertificateAuthentication()
+void QOpcUaAuthenticationInformation::setCertificateAuthentication(const QByteArray &authCert, const QByteArray &authPrivateKey)
 {
-    data->authenticationData = QVariant();
     data->authenticationType = QOpcUaUserTokenPolicy::TokenType::Certificate;
+    data->authenticationData = QVariant::fromValue(qMakePair(authCert, authPrivateKey));
 }
 
 /*!
