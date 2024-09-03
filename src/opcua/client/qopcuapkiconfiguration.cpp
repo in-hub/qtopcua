@@ -223,6 +223,9 @@ QOpcUaApplicationIdentity QOpcUaPkiConfiguration::applicationIdentity() const
 
     auto certList = QSslCertificate::fromPath(clientCertificateFile(), QSsl::Der);
     if (certList.isEmpty()) {
+        certList = QSslCertificate::fromPath(clientCertificateFile(), QSsl::Pem);
+    }
+    if (certList.isEmpty()) {
         qCWarning(QT_OPCUA_SECURITY) << "No client certificate found at" << clientCertificateFile()
                                      << ". Application identity will be invalid.";
         return QOpcUaApplicationIdentity();
