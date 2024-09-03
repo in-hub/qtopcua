@@ -137,7 +137,7 @@ private:
 
     double m_minPublishingInterval;
 
-    const UA_Logger m_open62541Logger {open62541LogHandler, nullptr, nullptr};
+    UA_Logger m_open62541Logger {open62541LogHandler, nullptr, nullptr};
 
     // Async contexts
 

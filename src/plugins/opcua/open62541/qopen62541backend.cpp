@@ -122,9 +122,9 @@ void Open62541AsyncBackend::readAttributes(quint64 handle, UA_NodeId id, QOpcUa:
     });
 
     quint32 requestId = 0;
-    UA_StatusCode result = __UA_Client_AsyncServiceEx(m_uaclient, &req, &UA_TYPES[UA_TYPES_READREQUEST],
+    UA_StatusCode result = __UA_Client_AsyncService(m_uaclient, &req, &UA_TYPES[UA_TYPES_READREQUEST],
                                                       &asyncReadCallback, &UA_TYPES[UA_TYPES_READRESPONSE], this,
-                                                      &requestId, m_asyncRequestTimeout);
+                                                      &requestId);
 
     if (result != UA_STATUSCODE_GOOD) {
         const auto statusCode = static_cast<QOpcUa::UaStatusCode>(result);
@@ -161,9 +161,9 @@ void Open62541AsyncBackend::writeAttribute(quint64 handle, UA_NodeId id, QOpcUa:
         QOpen62541ValueConverter::scalarFromQt<UA_String, QString>(indexRange, &req.nodesToWrite->indexRange);
 
     quint32 requestId = 0;
-    UA_StatusCode result = __UA_Client_AsyncServiceEx(m_uaclient, &req, &UA_TYPES[UA_TYPES_WRITEREQUEST],
+    UA_StatusCode result = __UA_Client_AsyncService(m_uaclient, &req, &UA_TYPES[UA_TYPES_WRITEREQUEST],
                                                       &asyncWriteAttributesCallback, &UA_TYPES[UA_TYPES_WRITERESPONSE], this,
-                                                      &requestId, m_asyncRequestTimeout);
+                                                      &requestId);
 
     if (result != UA_STATUSCODE_GOOD) {
         emit attributeWritten(handle, attrId, value, static_cast<QOpcUa::UaStatusCode>(result));
@@ -201,9 +201,9 @@ void Open62541AsyncBackend::writeAttributes(quint64 handle, UA_NodeId id, QOpcUa
     }
 
     quint32 requestId = 0;
-    UA_StatusCode result = __UA_Client_AsyncServiceEx(m_uaclient, &req, &UA_TYPES[UA_TYPES_WRITEREQUEST],
+    UA_StatusCode result = __UA_Client_AsyncService(m_uaclient, &req, &UA_TYPES[UA_TYPES_WRITEREQUEST],
                                                       &asyncWriteAttributesCallback, &UA_TYPES[UA_TYPES_WRITERESPONSE], this,
-                                                      &requestId, m_asyncRequestTimeout);
+                                                      &requestId);
 
     if (result != UA_STATUSCODE_GOOD) {
         index = 0;
@@ -357,10 +357,10 @@ void Open62541AsyncBackend::callMethod(quint64 handle, UA_NodeId objectId, UA_No
     request.methodsToCall->inputArguments = inputArgs;
     request.methodsToCall->inputArgumentsSize = args.size();
 
-    UA_StatusCode result = __UA_Client_AsyncServiceEx(m_uaclient, &request, &UA_TYPES[UA_TYPES_CALLREQUEST],
+    UA_StatusCode result = __UA_Client_AsyncService(m_uaclient, &request, &UA_TYPES[UA_TYPES_CALLREQUEST],
                                                       &asyncMethodCallback,
                                                       &UA_TYPES[UA_TYPES_CALLRESPONSE],
-                                                      this, &requestId, m_asyncRequestTimeout);
+                                                      this, &requestId);
     if (result != UA_STATUSCODE_GOOD)
         emit methodCallFinished(handle, Open62541Utils::nodeIdToQString(methodId), QVariant(),
                                 static_cast<QOpcUa::UaStatusCode>(result));
@@ -394,10 +394,10 @@ void Open62541AsyncBackend::resolveBrowsePath(quint64 handle, UA_NodeId startNod
     }
 
     quint32 requestId = 0;
-    UA_StatusCode result = __UA_Client_AsyncServiceEx(m_uaclient, &req, &UA_TYPES[UA_TYPES_TRANSLATEBROWSEPATHSTONODEIDSREQUEST],
+    UA_StatusCode result = __UA_Client_AsyncService(m_uaclient, &req, &UA_TYPES[UA_TYPES_TRANSLATEBROWSEPATHSTONODEIDSREQUEST],
                                                       &asyncTranslateBrowsePathCallback,
                                                       &UA_TYPES[UA_TYPES_TRANSLATEBROWSEPATHSTONODEIDSRESPONSE],
-                                                      this, &requestId, m_asyncRequestTimeout);
+                                                      this, &requestId);
 
     if (result != UA_STATUSCODE_GOOD) {
         qCWarning(QT_OPCUA_PLUGINS_OPEN62541) << "Translate browse path failed:" << UA_StatusCode_name(result);
@@ -462,7 +462,7 @@ void Open62541AsyncBackend::findServers(const QUrl &url, const QStringList &loca
     UA_Client *tmpClient = UA_Client_new();
     auto conf = UA_Client_getConfig(tmpClient);
 
-    conf->logger = m_open62541Logger;
+    conf->logging = &m_open62541Logger;
 
     UA_ClientConfig_setDefault(UA_Client_getConfig(tmpClient));
 
@@ -533,8 +533,8 @@ void Open62541AsyncBackend::readNodeAttributes(const QVector<QOpcUaReadItem> &no
     }
 
     quint32 requestId = 0;
-    UA_StatusCode result = __UA_Client_AsyncServiceEx(m_uaclient, &req, &UA_TYPES[UA_TYPES_READREQUEST], &asyncBatchReadCallback,
-                                                      &UA_TYPES[UA_TYPES_READRESPONSE], this, &requestId, m_asyncRequestTimeout);
+    UA_StatusCode result = __UA_Client_AsyncService(m_uaclient, &req, &UA_TYPES[UA_TYPES_READREQUEST], &asyncBatchReadCallback,
+                                                      &UA_TYPES[UA_TYPES_READRESPONSE], this, &requestId);
 
     if (result != UA_STATUSCODE_GOOD) {
         qCWarning(QT_OPCUA_PLUGINS_OPEN62541) << "Batch read failed:" << result;
@@ -590,8 +590,8 @@ void Open62541AsyncBackend::writeNodeAttributes(const QVector<QOpcUaWriteItem> &
     }
 
     quint32 requestId = 0;
-    UA_StatusCode result = __UA_Client_AsyncServiceEx(m_uaclient, &req, &UA_TYPES[UA_TYPES_WRITEREQUEST], &asyncBatchWriteCallback,
-                                                      &UA_TYPES[UA_TYPES_WRITERESPONSE], this, &requestId, m_asyncRequestTimeout);
+    UA_StatusCode result = __UA_Client_AsyncService(m_uaclient, &req, &UA_TYPES[UA_TYPES_WRITEREQUEST], &asyncBatchWriteCallback,
+                                                      &UA_TYPES[UA_TYPES_WRITERESPONSE], this, &requestId);
 
     if (result != UA_STATUSCODE_GOOD) {
         qCWarning(QT_OPCUA_PLUGINS_OPEN62541) << "Batch write failed:" << result;
@@ -635,10 +635,10 @@ void Open62541AsyncBackend::addNode(const QOpcUaAddNodeItem &nodeToAdd)
                     nodeToAdd.typeDefinition(), &req.nodesToAdd->typeDefinition);
 
     quint32 requestId = 0;
-    UA_StatusCode result = __UA_Client_AsyncServiceEx(m_uaclient, &req, &UA_TYPES[UA_TYPES_ADDNODESREQUEST],
+    UA_StatusCode result = __UA_Client_AsyncService(m_uaclient, &req, &UA_TYPES[UA_TYPES_ADDNODESREQUEST],
                                                       &asyncAddNodeCallback,
                                                       &UA_TYPES[UA_TYPES_ADDNODESRESPONSE],
-                                                      this, &requestId, m_asyncRequestTimeout);
+                                                      this, &requestId);
 
     if (result != UA_STATUSCODE_GOOD) {
         qCDebug(QT_OPCUA_PLUGINS_OPEN62541) << "Failed to add node:" << result;
@@ -665,10 +665,10 @@ void Open62541AsyncBackend::deleteNode(const QString &nodeId, bool deleteTargetR
     request.nodesToDelete->deleteTargetReferences = deleteTargetReferences;
 
     quint32 requestId = 0;
-    UA_StatusCode result = __UA_Client_AsyncServiceEx(m_uaclient, &request, &UA_TYPES[UA_TYPES_DELETENODESREQUEST],
+    UA_StatusCode result = __UA_Client_AsyncService(m_uaclient, &request, &UA_TYPES[UA_TYPES_DELETENODESREQUEST],
                                                       &asyncDeleteNodeCallback,
                                                       &UA_TYPES[UA_TYPES_DELETENODESRESPONSE],
-                                                      this, &requestId, m_asyncRequestTimeout);
+                                                      this, &requestId);
 
     QOpcUa::UaStatusCode resultStatus = static_cast<QOpcUa::UaStatusCode>(result);
 
@@ -705,10 +705,10 @@ void Open62541AsyncBackend::addReference(const QOpcUaAddReferenceItem &reference
                                                                &request.referencesToAdd->targetServerUri);
 
     quint32 requestId = 0;
-    UA_StatusCode result = __UA_Client_AsyncServiceEx(m_uaclient, &request, &UA_TYPES[UA_TYPES_ADDREFERENCESREQUEST],
+    UA_StatusCode result = __UA_Client_AsyncService(m_uaclient, &request, &UA_TYPES[UA_TYPES_ADDREFERENCESREQUEST],
                                                       &asyncAddReferenceCallback,
                                                       &UA_TYPES[UA_TYPES_ADDREFERENCESRESPONSE],
-                                                      this, &requestId, m_asyncRequestTimeout);
+                                                      this, &requestId);
 
     QOpcUa::UaStatusCode statusCode = static_cast<QOpcUa::UaStatusCode>(result);
     if (result != UA_STATUSCODE_GOOD) {
@@ -744,10 +744,10 @@ void Open62541AsyncBackend::deleteReference(const QOpcUaDeleteReferenceItem &ref
     request.referencesToDelete->deleteBidirectional = referenceToDelete.deleteBidirectional();
 
     quint32 requestId = 0;
-    UA_StatusCode result = __UA_Client_AsyncServiceEx(m_uaclient, &request, &UA_TYPES[UA_TYPES_DELETEREFERENCESREQUEST],
+    UA_StatusCode result = __UA_Client_AsyncService(m_uaclient, &request, &UA_TYPES[UA_TYPES_DELETEREFERENCESREQUEST],
                                                       &asyncDeleteReferenceCallback,
                                                       &UA_TYPES[UA_TYPES_DELETEREFERENCESRESPONSE],
-                                                      this, &requestId, m_asyncRequestTimeout);
+                                                      this, &requestId);
 
     QOpcUa::UaStatusCode statusCode = static_cast<QOpcUa::UaStatusCode>(result);
     if (result != UA_STATUSCODE_GOOD) {
@@ -802,8 +802,8 @@ void Open62541AsyncBackend::browse(quint64 handle, UA_NodeId id, const QOpcUaBro
     uaRequest.requestedMaxReferencesPerNode = 0; // Let the server choose a maximum value
 
     quint32 requestId = 0;
-    UA_StatusCode result = __UA_Client_AsyncServiceEx(m_uaclient, &uaRequest, &UA_TYPES[UA_TYPES_BROWSEREQUEST], &asyncBrowseCallback,
-                                                      &UA_TYPES[UA_TYPES_BROWSERESPONSE], this, &requestId, m_asyncRequestTimeout);
+    UA_StatusCode result = __UA_Client_AsyncService(m_uaclient, &uaRequest, &UA_TYPES[UA_TYPES_BROWSEREQUEST], &asyncBrowseCallback,
+                                                      &UA_TYPES[UA_TYPES_BROWSERESPONSE], this, &requestId);
 
     if (result != UA_STATUSCODE_GOOD) {
         emit browseFinished(handle, QVector<QOpcUaReferenceDescription>(), static_cast<QOpcUa::UaStatusCode>(result));
@@ -865,7 +865,7 @@ void Open62541AsyncBackend::connectToEndpoint(const QOpcUaEndpointDescription &e
     m_uaclient = UA_Client_new();
     auto conf = UA_Client_getConfig(m_uaclient);
 
-    conf->logger = m_open62541Logger;
+    conf->logging = &m_open62541Logger;
 
     const auto identity = m_clientImpl->m_client->applicationIdentity();
     const auto authInfo = m_clientImpl->m_client->authenticationInformation();
@@ -1040,7 +1040,7 @@ void Open62541AsyncBackend::requestEndpoints(const QUrl &url)
     UA_Client *tmpClient = UA_Client_new();
     auto conf = UA_Client_getConfig(tmpClient);
 
-    conf->logger = m_open62541Logger;
+    conf->logging = &m_open62541Logger;
 
     UA_ClientConfig_setDefault(conf);
 
@@ -1376,8 +1376,8 @@ void Open62541AsyncBackend::asyncBrowseCallback(UA_Client *client, void *userdat
         UA_ByteString_copy(continuationPoint, request.continuationPoints);
 
         quint32 requestId = 0;
-        statusCode =__UA_Client_AsyncServiceEx(client, &request, &UA_TYPES[UA_TYPES_BROWSENEXTREQUEST], &asyncBrowseCallback,
-                                   &UA_TYPES[UA_TYPES_BROWSENEXTRESPONSE], backend, &requestId, backend->m_asyncRequestTimeout);
+        statusCode =__UA_Client_AsyncService(client, &request, &UA_TYPES[UA_TYPES_BROWSENEXTREQUEST], &asyncBrowseCallback,
+                                   &UA_TYPES[UA_TYPES_BROWSENEXTRESPONSE], backend, &requestId);
 
         if (statusCode == UA_STATUSCODE_GOOD) {
             context.isBrowseNext = true;

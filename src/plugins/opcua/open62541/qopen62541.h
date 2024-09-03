@@ -51,7 +51,12 @@
 #pragma clang diagnostic ignored "-Wunused-parameter"
 #endif
 
-#include <open62541.h>
+#include <open62541/client_config_default.h>
+#include <open62541/client_highlevel.h>
+#include <open62541/client_highlevel_async.h>
+#include <open62541/client_subscriptions.h>
+#include <open62541/client.h>
+#include <open62541/plugin/pki_default.h>
 
 #if defined(_MSC_VER)
 #pragma warning(pop)
