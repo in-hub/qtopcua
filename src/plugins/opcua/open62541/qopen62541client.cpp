@@ -173,6 +173,7 @@ QStringList QOpen62541Client::supportedSecurityPolicies() const
         , "http://opcfoundation.org/UA/SecurityPolicy#Basic256"
         , "http://opcfoundation.org/UA/SecurityPolicy#Basic256Sha256"
         , "http://opcfoundation.org/UA/SecurityPolicy#Aes128_Sha256_RsaOaep"
+        , "http://opcfoundation.org/UA/SecurityPolicy#Aes256_Sha256_RsaPss"
 #endif
     };
 }
